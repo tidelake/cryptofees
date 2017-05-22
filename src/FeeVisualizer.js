@@ -23,19 +23,6 @@ class FeeVisualizer extends Component {
             });
 
             this.retrieveTransactions(+this.props.minAmount, +this.props.maxAmount);
-
-            // this.props.provider.getLastTransactions((txs) => {
-            //     let transactions = _.chain(txs)
-            //         .filter((tx) => { return tx.fee > 0 && tx.amountUSD >= +root.props.minAmount && tx.amountUSD <= +root.props.maxAmount })
-            //         // .take(30) // TODO configure this?
-            //         .orderBy('percentage')
-            //         .value();
-
-            //     this.setState({
-            //         price: this.state.price,
-            //         transactions: transactions
-            //     });
-            // });
         });
     }
 
@@ -47,9 +34,6 @@ class FeeVisualizer extends Component {
                 .orderBy('percentage')
                 .value();
 
-console.log(min + ' - ' + max);
-console.log(transactions);
-
             this.setState({
                 price: this.state.price,
                 transactions: transactions
@@ -59,7 +43,19 @@ console.log(transactions);
 
     renderTransactions = () => {
         if(this.state.transactions) {
-            return this.state.transactions.map(this.renderTransaction);
+            return (
+                <div>
+                    <table className="table table-condensed">
+                        <thead>
+                            <td>Amount, USD</td>
+                            <td>Fee, USD</td>
+                            <td>Fee Percentage</td>
+                            <td></td>
+                        </thead>
+                        <tbody>{this.state.transactions.map(this.renderTransaction)}</tbody>
+                    </table>
+                </div>
+            );
         } else {
             return (<p>Retrieving latest transactions...</p>);
         }
@@ -76,9 +72,12 @@ console.log(transactions);
 
             return (
                 <div>
-                    <p>Average transaction fee is {average.feeUSD} USD, or {average.percentage}%</p>
-                    <p>Min fee is {min.percentage.toFixed(4)}% - <a target="_blank" href={this.props.provider.getTransactionURL(min.id)}>view tx</a></p>
-                    <p>Max fee is {max.percentage.toFixed(4)}% - <a target="_blank" href={this.props.provider.getTransactionURL(max.id)}>view tx</a></p>
+                    <p>
+                        <b>Average transaction fee is {average.feeUSD} USD, or {average.percentage}%</b><br/>
+                        Min fee is {min.percentage.toFixed(4)}% <a target="_blank" href={this.props.provider.getTransactionURL(min.id)} className="btn btn-link btn-xs">Transaction Details</a><br/>
+                        Max fee is {max.percentage.toFixed(4)}% <a target="_blank" href={this.props.provider.getTransactionURL(max.id)} className="btn btn-link btn-xs">Transaction Details</a>
+                    </p>
+                    <p>Latest transactions with amount between {this.props.minAmount} and {this.props.maxAmount} USD:</p>
                 </div>
             );
         } else {

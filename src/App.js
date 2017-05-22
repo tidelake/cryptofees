@@ -12,7 +12,7 @@ class App extends Component {
 
         this.state = {
             minAmount: 20,
-            maxAmount: 120
+            maxAmount: 100
         };
 
         this.providerBTC = new BTCProvider();
@@ -24,21 +24,30 @@ class App extends Component {
     render() {
         return (
             <div>
+                <p><i>Enter minimum and maximum amount in USD to compare Bitcoin and Ether fees for transactions in provided range.</i></p>
                 <div className="row">
                     <div className="col-md-12">
-
-    <form className="form-inline" onSubmit={this.handleSubmit}>
-      <div className="form-group">
-        <label htmlFor="inputMinAmount">Min</label>
-        <input type="number" className="form-control" id="inputMinAmount" placeholder="Min Amount" defaultValue={this.state.minAmount} ref={(input) => this.inputMin = input} />
-      </div>
-      <div className="form-group">
-        <label htmlFor="inputMaxAmount">Max</label>
-        <input type="number" className="form-control" id="inputMaxAmount" placeholder="Max Amount" defaultValue={this.state.maxAmount} ref={(input) => this.inputMax = input} />
-      </div>
-      <button type="submit" className="btn btn-default">Compare fees</button>
-    </form>
-
+                        <form className="form-inline" onSubmit={this.handleSubmit}>
+                            <div className="form-group">
+                            <label htmlFor="inputMinAmount">Min Amount:</label>
+                            {" "}
+                            <input type="number" className="form-control narrow-input" id="inputMinAmount" placeholder="Min Amount" defaultValue={this.state.minAmount} ref={(input) => this.inputMin = input} />
+                            {" "}
+                            USD;
+                            {" "}
+                            </div>
+                            {" "}
+                            <div className="form-group">
+                            <label htmlFor="inputMaxAmount">Max Amount: </label>
+                            {" "}
+                            <input type="number" className="form-control narrow-input" id="inputMaxAmount" placeholder="Max Amount" defaultValue={this.state.maxAmount} ref={(input) => this.inputMax = input} />
+                            {" "}
+                            USD
+                            {" "}
+                            </div>
+                            {" "}
+                            <button type="submit" className="btn btn-primary">Compare fees</button>
+                        </form>
                     </div>
                 </div>
                 <div className="row">
