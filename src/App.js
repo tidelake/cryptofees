@@ -33,7 +33,7 @@ class App extends Component {
                             {" "}
                             <input type="number" className="form-control narrow-input" id="inputMinAmount" placeholder="Min Amount" defaultValue={this.state.minAmount} ref={(input) => this.inputMin = input} />
                             {" "}
-                            USD;
+                            <span className="hidden-xs">USD;</span>
                             {" "}
                             </div>
                             {" "}
@@ -42,7 +42,7 @@ class App extends Component {
                             {" "}
                             <input type="number" className="form-control narrow-input" id="inputMaxAmount" placeholder="Max Amount" defaultValue={this.state.maxAmount} ref={(input) => this.inputMax = input} />
                             {" "}
-                            USD
+                            <span className="hidden-xs">USD</span>
                             {" "}
                             </div>
                             {" "}

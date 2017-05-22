@@ -15,3 +15,10 @@
         width: 100px;
     }
 }
+
+.main-logo {
+    background-image: url('./img/logo-full-100px.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    min-width: 240px;
+}
