@@ -40,7 +40,6 @@ class ETHProvider extends CurrencyInfoProvider {
                 this.counter++;
 
                 if (this.counter === BLOCKS_TO_RETRIEVE) {
-                    // console.log(this.transactions);
                     result = _.chain(this.transactions)
                         .filter((tx) => {
                             return tx.amount > 0 && tx.gasUsed > 0
@@ -63,7 +62,6 @@ class ETHProvider extends CurrencyInfoProvider {
                         })
                         .value();
                     callback && callback(result);
-                    // console.log(result);
                 }
             })
             .catch((err) => {
@@ -74,9 +72,6 @@ class ETHProvider extends CurrencyInfoProvider {
     getLastTransactions(callback) {
         this.transactions = [];
         this.counter = 0;
-
-console.log(this.price);
-console.log(this.lastBlock);
 
         for (let i = 0; i < BLOCKS_TO_RETRIEVE; i++) {
             this.getTransactionsFromBlock(this.lastBlock - i, callback);

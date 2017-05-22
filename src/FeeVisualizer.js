@@ -47,10 +47,12 @@ class FeeVisualizer extends Component {
                 <div>
                     <table className="table table-condensed">
                         <thead>
-                            <td>Amount, USD</td>
-                            <td>Fee, USD</td>
-                            <td>Fee Percentage</td>
-                            <td></td>
+                            <tr>
+                                <td>Amount, USD</td>
+                                <td>Fee, USD</td>
+                                <td>Fee Percentage</td>
+                                <td></td>
+                            </tr>
                         </thead>
                         <tbody>{this.state.transactions.map(this.renderTransaction)}</tbody>
                     </table>
