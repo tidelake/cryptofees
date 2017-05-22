@@ -50,6 +50,7 @@ class App extends Component {
                         </form>
                     </div>
                 </div>
+                <hr/>
                 <div className="row">
                     <div className="col-md-6">
                         <FeeVisualizer minAmount={this.state.minAmount} maxAmount={this.state.maxAmount} provider={this.providerBTC} />

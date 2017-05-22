@@ -7,7 +7,11 @@ class Transaction extends Component {
                 <td>{(+this.props.amountUSD).toFixed(2)}</td>
                 <td>{(+this.props.feeUSD).toFixed(2)}</td>
                 <td>{+this.props.percentage.toFixed(4)}%</td>
-                <td><a href={this.props.url} target="_blank" className="btn btn-default btn-xs">Transaction Details</a></td>
+                <td>
+                    <a href={this.props.url} target="_blank" className="btn btn-default btn-xs">
+                        <span className="hidden-xs">Transaction</span> Details
+                    </a>
+                </td>
             </tr>
         );
     }

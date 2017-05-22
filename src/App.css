@@ -1,5 +1,5 @@
 .transactionsList {
-    max-height: 45vh;
+    max-height: 40vh;
     overflow: auto;
 }
 
@@ -21,4 +21,14 @@
     background-size: contain;
     background-repeat: no-repeat;
     min-width: 240px;
+}
+
+.currency-logo {
+    height: 1em;
+    vertical-align: top;
+    padding: 0 8px 0 0;
+}
+
+.text-small {
+    font-size: 75%;
 }

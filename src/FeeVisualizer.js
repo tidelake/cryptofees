@@ -15,8 +15,6 @@ class FeeVisualizer extends Component {
     renderTransaction = (tx) => (<Transaction key={tx.id} id={tx.id} url={this.props.provider.getTransactionURL(tx.id)} amount={tx.amount} fee={tx.fee} amountUSD={tx.amountUSD} feeUSD={tx.feeUSD} percentage={tx.percentage} />);
 
     componentDidMount() {
-        // var root = this;
-
         this.props.provider.initialize((price) => {
             this.setState({
                 price: price.toFixed(1) + ' USD'
@@ -96,7 +94,11 @@ class FeeVisualizer extends Component {
     render() {
         return (
             <div>
-                <h2><b>{this.props.provider.getCurrencyName()}</b> <span className="price pull-right">{this.state.price}</span></h2>
+                <h2>
+                    <img src={'img/' + this.props.provider.getCurrencyName().toLowerCase() + '.svg'} alt="" className="currency-logo" />
+                    <b>{this.props.provider.getCurrencyName()}</b>
+                    <span className="price pull-right">{this.state.price}</span>
+                </h2>
                 {this.renderAverageValues()}
                 <div className="transactionsList">
                     {this.renderTransactions()}
