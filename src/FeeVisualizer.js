@@ -69,7 +69,7 @@ class FeeVisualizer extends Component {
             };
             let min = _.minBy(this.state.transactions, 'percentage'),
                 max = _.maxBy(this.state.transactions, 'percentage'),
-                medianFee = (this.state.transactions[(this.state.transactions.length - 1) >> 1]['feeUSD'] + this.state.transactions[this.state.transactions.length >> 1]['feeUSD']) / 2,
+                // medianFee = (this.state.transactions[(this.state.transactions.length - 1) >> 1]['feeUSD'] + this.state.transactions[this.state.transactions.length >> 1]['feeUSD']) / 2,
                 medianPercentage = (this.state.transactions[(this.state.transactions.length - 1) >> 1]['percentage'] + this.state.transactions[this.state.transactions.length >> 1]['percentage']) / 2;
 
             return (

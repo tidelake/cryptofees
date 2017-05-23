@@ -2,6 +2,8 @@ import CurrencyInfoProvider from './CurrencyInfoProvider';
 
 /* global _ */
 
+const BLOCKS_TO_RETRIEVE = 8;
+
 class BTCProvider extends CurrencyInfoProvider {
     initialize(callback) {
         super.initialize();
@@ -12,6 +14,7 @@ class BTCProvider extends CurrencyInfoProvider {
                     price = _.chain(data.data.markets).toArray().meanBy('value').value();
 
                 this.price = price;
+                this.lastBlock = data.data.last_block.nb;
 
                 callback && callback(this.price);
             })
@@ -27,10 +30,12 @@ class BTCProvider extends CurrencyInfoProvider {
     };
 
     getLastTransactions(callback) {
-        this.get('http://btc.blockr.io/api/v1/block/txs/last')
+        let blocks = (new Array(BLOCKS_TO_RETRIEVE).fill(0).map((item, index) => this.lastBlock - index));
+
+        this.get('http://btc.blockr.io/api/v1/block/txs/' + blocks.join(','))
             .then((response) => {
                 let data = JSON.parse(response),
-                    txs = data.data.txs,
+                    txs = _.flatMap(data.data, 'txs'),
                     result = txs.map((tx, index) => {
                         let sumOut = _.sumBy(tx.trade.vouts, 'amount');
 
@@ -43,8 +48,6 @@ class BTCProvider extends CurrencyInfoProvider {
                             percentage: (+tx.fee) / ((+sumOut) + (+tx.fee)) * 100
                         };
                     });
-
-                    // console.log(txs.length);
 
                 callback && callback(result);
             })
