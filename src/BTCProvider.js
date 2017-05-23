@@ -44,6 +44,8 @@ class BTCProvider extends CurrencyInfoProvider {
                         };
                     });
 
+                    // console.log(txs.length);
+
                 callback && callback(result);
             })
             .catch((err) => {

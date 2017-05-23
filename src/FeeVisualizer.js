@@ -68,12 +68,15 @@ class FeeVisualizer extends Component {
                 feeUSD: _.meanBy(this.state.transactions, 'feeUSD').toFixed(4)
             };
             let min = _.minBy(this.state.transactions, 'percentage'),
-                max = _.maxBy(this.state.transactions, 'percentage');
+                max = _.maxBy(this.state.transactions, 'percentage'),
+                medianFee = (this.state.transactions[(this.state.transactions.length - 1) >> 1]['feeUSD'] + this.state.transactions[this.state.transactions.length >> 1]['feeUSD']) / 2,
+                medianPercentage = (this.state.transactions[(this.state.transactions.length - 1) >> 1]['percentage'] + this.state.transactions[this.state.transactions.length >> 1]['percentage']) / 2;
 
             return (
                 <div>
                     <p>
-                        <b>Average transaction fee is {average.feeUSD} USD, or {average.percentage}%</b><br/>
+                        <b>Average <span className="hidden-xs">transaction</span> fee is {average.percentage}%,
+                        median <span className="hidden-xs">fee</span> is {medianPercentage.toFixed(4)}%</b><br/>
                         Min fee is {min.percentage.toFixed(4)}% <a target="_blank" href={this.props.provider.getTransactionURL(min.id)} className="btn btn-link btn-xs">Transaction Details</a><br/>
                         Max fee is {max.percentage.toFixed(4)}% <a target="_blank" href={this.props.provider.getTransactionURL(max.id)} className="btn btn-link btn-xs">Transaction Details</a>
                     </p>

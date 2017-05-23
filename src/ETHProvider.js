@@ -2,7 +2,7 @@ import CurrencyInfoProvider from './CurrencyInfoProvider';
 
 /* global _ */
 
-const BLOCKS_TO_RETRIEVE = 5;
+const BLOCKS_TO_RETRIEVE = 10;
 
 class ETHProvider extends CurrencyInfoProvider {
 
@@ -40,6 +40,7 @@ class ETHProvider extends CurrencyInfoProvider {
                 this.counter++;
 
                 if (this.counter === BLOCKS_TO_RETRIEVE) {
+                    // console.log(this.transactions.length);
                     result = _.chain(this.transactions)
                         .filter((tx) => {
                             return tx.amount > 0 && tx.gasUsed > 0
