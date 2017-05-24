@@ -89,8 +89,8 @@ class FeeVisualizer extends Component {
                     <p>
                         <b>Average <span className="hidden-xs">transaction</span> fee is {average.percentage}%,
                         median <span className="hidden-xs">fee</span> is {medianPercentage.toFixed(4)}%</b><br/>
-                        Min fee is <span title={min.feeUSD.toFixed(2) + 'USD'}>{min.percentage.toFixed(4)}%</span> <a target="_blank" href={this.props.provider.getTransactionURL(min.id)} className="btn btn-link btn-xs">Transaction Details</a><br/>
-                        Max fee is <span title={max.feeUSD.toFixed(2) + 'USD'}>{max.percentage.toFixed(4)}%</span> <a target="_blank" href={this.props.provider.getTransactionURL(max.id)} className="btn btn-link btn-xs">Transaction Details</a>
+                        Min fee is <span title={min.feeUSD.toFixed(2) + ' USD'}>{min.percentage.toFixed(4)}%</span> <a target="_blank" href={this.props.provider.getTransactionURL(min.id)} className="btn btn-link btn-xs">Transaction Details</a><br/>
+                        Max fee is <span title={max.feeUSD.toFixed(2) + ' USD'}>{max.percentage.toFixed(4)}%</span> <a target="_blank" href={this.props.provider.getTransactionURL(max.id)} className="btn btn-link btn-xs">Transaction Details</a>
                     </p>
                     <p>Latest transactions with amount between {this.props.minAmount} and {this.props.maxAmount} USD:</p>
                 </div>
