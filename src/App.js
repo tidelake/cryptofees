@@ -24,7 +24,8 @@ class App extends Component {
     render() {
         return (
             <div>
-                <p><i>Enter minimum and maximum amount in USD to compare Bitcoin and Ether fees for transactions in provided range.</i></p>
+                <p className="hidden-xs"><i>Enter minimum and maximum amount in USD to compare Bitcoin and Ether fees for transactions in provided range.</i></p>
+                <p className="hidden-sm hidden-md hidden-lg"><i>Enter min and max amount in USD to compare BTC and ETH fees in provided range.</i></p>
                 <div className="row">
                     <div className="col-md-12">
                         <form className="form-inline" onSubmit={this.handleSubmit}>

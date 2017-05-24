@@ -52,9 +52,39 @@
                 <a class="navbar-brand main-logo" href="#" title="CryptoFees"></a>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="javascript:void(0);" data-toggle="modal" data-target="#modalAbout">About this site</a></li>
+                </ul>
             </div>
         </div>
     </nav>
+
+    <div class="modal fade" id="modalAbout" tabindex="-1" role="dialog" aria-labelledby="modalAboutLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="modalAboutLabel">About this site</h4>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        CryptoFees is an <a target="_blank" href="https://github.com/keaukraine/cryptofees">open-source project</a> made by <a target="_blank" href="https://twitter.com/keaukraine">Oleksandr Popov</a> to showcase which cryptocurrency provides best fees for money transfers by analyzing latest transactions from Bitcoin and Ethereum blockchains.
+                    </p>
+                    <p>
+                        How it works (technical stuff).
+                        First, site retrieves current exchange rates and a bunch of latest <a target="_blank" href="http://blockr.io/documentation/api">BTC</a> and <a target="_blank" href="https://etherchain.org/apidoc">ETH</a> transactions. Then to compare apples to apples all contract ETH transactions are omitted. From these two sets of transactions algorithm takes only the ones within provided amount range (default is 20-100 USD, you can enter any other values) and calculates average/median/min/max values. It is up to you to decide which cryptocurrency is better based on your needs.
+                    </p>
+                    <p class="text-muted">
+                        This site has no ads and I make no profit from it. However, if you want to buy me a beer, you can find BTC and ETH addresses in the footer of the page.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <div id="root"></div>
         <hr>
