@@ -5,7 +5,7 @@ import CurrencyInfoProvider from './CurrencyInfoProvider';
 const BLOCKS_TO_RETRIEVE = 8;
 
 class BTCProvider extends CurrencyInfoProvider {
-    initialize(callback) {
+    initialize(callback, callbackError) {
         super.initialize();
 
         this.get('http://btc.blockr.io/api/v1/coin/info')
@@ -19,6 +19,7 @@ class BTCProvider extends CurrencyInfoProvider {
                 callback && callback(this.price);
             })
             .catch((err) => {
+                callbackError && callbackError();
                 console.warn('Cannot retrieve basic BTC info!');
             });
     }
@@ -29,7 +30,7 @@ class BTCProvider extends CurrencyInfoProvider {
         return 'https://blockchain.info/tx/' + tx;
     };
 
-    getLastTransactions(callback) {
+    getLastTransactions(callback, callbackError) {
         let blocks = (new Array(BLOCKS_TO_RETRIEVE).fill(0).map((item, index) => this.lastBlock - index));
 
         this.get('http://btc.blockr.io/api/v1/block/txs/' + blocks.join(','))
@@ -52,6 +53,7 @@ class BTCProvider extends CurrencyInfoProvider {
                 callback && callback(result);
             })
             .catch((err) => {
+                callbackError && callbackError();
                 console.warn('Cannot retrieve latest BTC transactions!');
             });
     }

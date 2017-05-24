@@ -8,19 +8,23 @@ class FeeVisualizer extends Component {
         super(props);
 
         this.state = {
-            price: '',
+            price: ''
         };
     }
 
     renderTransaction = (tx) => (<Transaction key={tx.id} id={tx.id} url={this.props.provider.getTransactionURL(tx.id)} amount={tx.amount} fee={tx.fee} amountUSD={tx.amountUSD} feeUSD={tx.feeUSD} percentage={tx.percentage} />);
 
     componentDidMount() {
+        this.setState({ price: '' });
         this.props.provider.initialize((price) => {
             this.setState({
                 price: price.toFixed(1) + ' USD'
             });
 
             this.retrieveTransactions(+this.props.minAmount, +this.props.maxAmount);
+        },
+        () => {
+            this.setState({ error: true });
         });
     }
 
@@ -33,31 +37,39 @@ class FeeVisualizer extends Component {
                 .value();
 
             this.setState({
+                error: undefined,
                 price: this.state.price,
                 transactions: transactions
             });
+        },
+        () => {
+            this.setState({ error: true });
         });
     }
 
     renderTransactions = () => {
-        if(this.state.transactions) {
-            return (
-                <div>
-                    <table className="table table-condensed">
-                        <thead>
-                            <tr>
-                                <td>Amount, USD</td>
-                                <td>Fee, USD</td>
-                                <td>Fee Percentage</td>
-                                <td></td>
-                            </tr>
-                        </thead>
-                        <tbody>{this.state.transactions.map(this.renderTransaction)}</tbody>
-                    </table>
-                </div>
-            );
+        if(this.state.error) {
+            return (<div className="text-danger">Error: cannot retrieve {this.props.provider.getCurrencyName()} transactions.</div>);
         } else {
-            return (<p>Retrieving latest transactions...</p>);
+            if(this.state.transactions) {
+                return (
+                    <div>
+                        <table className="table table-condensed">
+                            <thead>
+                                <tr>
+                                    <td>Amount, USD</td>
+                                    <td>Fee, USD</td>
+                                    <td>Fee Percentage</td>
+                                    <td></td>
+                                </tr>
+                            </thead>
+                            <tbody>{this.state.transactions.map(this.renderTransaction)}</tbody>
+                        </table>
+                    </div>
+                );
+            } else {
+                return (<p>Retrieving latest transactions...</p>);
+            }
         }
     }
 

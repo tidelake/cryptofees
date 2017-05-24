@@ -6,7 +6,7 @@ const BLOCKS_TO_RETRIEVE = 10;
 
 class ETHProvider extends CurrencyInfoProvider {
 
-    initialize(callback) {
+    initialize(callback, callbackError) {
         super.initialize();
 
         this.get('https://etherchain.org/api/basic_stats')
@@ -19,6 +19,7 @@ class ETHProvider extends CurrencyInfoProvider {
                 callback && callback(this.price);
             })
             .catch((err) => {
+                callbackError && callbackError();
                 console.warn('Cannot retrieve basic ETH info!');
             });
     }
@@ -29,7 +30,7 @@ class ETHProvider extends CurrencyInfoProvider {
         return 'https://etherscan.io/tx/' + tx;
     };
 
-    getTransactionsFromBlock(block, callback) {
+    getTransactionsFromBlock(block, callback, callbackError) {
         this.get('https://etherchain.org/api/block/' + block + '/tx')
             .then((response) => {
                 let data = JSON.parse(response),
@@ -66,16 +67,17 @@ class ETHProvider extends CurrencyInfoProvider {
                 }
             })
             .catch((err) => {
+                callbackError && callbackError();
                 console.warn('Cannot retrieve latest ETH transactions!');
             });
     }
 
-    getLastTransactions(callback) {
+    getLastTransactions(callback, callbackError) {
         this.transactions = [];
         this.counter = 0;
 
         for (let i = 0; i < BLOCKS_TO_RETRIEVE; i++) {
-            this.getTransactionsFromBlock(this.lastBlock - i, callback);
+            this.getTransactionsFromBlock(this.lastBlock - i, callback, callbackError);
         }
     }
 }
