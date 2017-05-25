@@ -3,6 +3,7 @@ import CurrencyInfoProvider from './CurrencyInfoProvider';
 /* global _ */
 
 const TRANSACTIONS_TO_RETRIEVE = 1000;
+const BLOCKS_TO_RETRIEVE = 10;
 
 class ETHProvider extends CurrencyInfoProvider {
 
@@ -30,42 +31,90 @@ class ETHProvider extends CurrencyInfoProvider {
         return 'https://etherscan.io/tx/' + tx;
     };
 
-    getLastTransactions(callback, callbackError) {
-        this.get('https://etherchain.org/api/txs/0/' + TRANSACTIONS_TO_RETRIEVE)
+    getTransactionsFromBlock(block, callback, callbackError) {
+        this.get('https://etherchain.org/api/block/' + block + '/tx')
             .then((response) => {
                 let data = JSON.parse(response),
-                    transactions = data.data,
+                    txs = data.data,
                     result;
 
-                result = _.chain(transactions)
-                    .filter((tx) => {
-                        return tx.amount > 0 && tx.gasUsed === 21000
-                    })
-                    .map((tx, index) => {
-                        let amount = tx.amount / 1000000000000000000,
-                            fee = tx.gasUsed * (tx.price / 1000000000000000000),
-                            feeUSD = fee * this.price;
+                this.transactions = this.transactions.concat(txs);
+                this.counter++;
 
-                        return {
-                            id: tx.hash,
-                            amount: amount,
-                            amountUSD: amount * this.price,
-                            gasUsed: tx.gasUsed,
-                            gasPrice: tx.price / 1000000000000000000,
-                            fee: fee,
-                            feeUSD: feeUSD,
-                            percentage: fee / (fee + amount) * 100
-                        };
-                    })
-                    .value();
+                if (this.counter === BLOCKS_TO_RETRIEVE) {
+                    // console.log(this.transactions.length);
+                    result = _.chain(this.transactions)
+                        .filter((tx) => {
+                            return tx.amount > 0 && tx.gasUsed > 0
+                        })
+                        .map((tx, index) => {
+                            let amount = tx.amount / 1000000000000000000,
+                                fee = tx.gasUsed * (tx.price / 1000000000000000000),
+                                feeUSD = fee * this.price;
 
-                callback && callback(result);
+                            return {
+                                id: tx.hash,
+                                amount: amount,
+                                amountUSD: amount * this.price,
+                                gasUsed: tx.gasUsed,
+                                gasPrice: tx.price / 1000000000000000000,
+                                fee: fee,
+                                feeUSD: feeUSD,
+                                percentage: fee / (fee + amount) * 100
+                            };
+                        })
+                        .value();
+                    callback && callback(result);
+                }
             })
             .catch((err) => {
                 callbackError && callbackError();
                 console.warn('Cannot retrieve latest ETH transactions!');
             });
+    }
 
+    getLastTransactions(callback, callbackError) {
+        this.transactions = [];
+        this.counter = 0;
+
+        for (let i = 0; i < BLOCKS_TO_RETRIEVE; i++) {
+            this.getTransactionsFromBlock(this.lastBlock - i, callback, callbackError);
+        }
+
+        // this.get('https://etherchain.org/api/txs/0/' + TRANSACTIONS_TO_RETRIEVE)
+        //     .then((response) => {
+        //         let data = JSON.parse(response),
+        //             transactions = data.data,
+        //             result;
+
+        //         result = _.chain(transactions)
+        //             .filter((tx) => {
+        //                 return tx.amount > 0 && tx.gasUsed === 21000
+        //             })
+        //             .map((tx, index) => {
+        //                 let amount = tx.amount / 1000000000000000000,
+        //                     fee = tx.gasUsed * (tx.price / 1000000000000000000),
+        //                     feeUSD = fee * this.price;
+
+        //                 return {
+        //                     id: tx.hash,
+        //                     amount: amount,
+        //                     amountUSD: amount * this.price,
+        //                     gasUsed: tx.gasUsed,
+        //                     gasPrice: tx.price / 1000000000000000000,
+        //                     fee: fee,
+        //                     feeUSD: feeUSD,
+        //                     percentage: fee / (fee + amount) * 100
+        //                 };
+        //             })
+        //             .value();
+
+        //         callback && callback(result);
+        //     })
+        //     .catch((err) => {
+        //         callbackError && callbackError();
+        //         console.warn('Cannot retrieve latest ETH transactions!');
+        //     });
     }
 }
 
