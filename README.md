@@ -1,5 +1,5 @@
 # CryptoFees
-An easy way to compare Bitcoin and Ether transaction fees.
+An easy way to compare Bitcoin and Ether transaction fees - http://cryptofees.net
 
 ## Artwork used in site logo
 * Coins by Gregor Cresnar from the Noun Project
