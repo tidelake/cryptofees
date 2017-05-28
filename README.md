@@ -13,7 +13,7 @@ An easy way to compare Bitcoin and Ether transaction fees - http://cryptofees.ne
 
 
 
-#License
+## License
 
 **The MIT License**
 
