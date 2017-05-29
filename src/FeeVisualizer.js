@@ -52,21 +52,25 @@ class FeeVisualizer extends Component {
             return (<div className="text-danger">Error: cannot retrieve {this.props.provider.getCurrencyName()} transactions.</div>);
         } else {
             if(this.state.transactions) {
-                return (
-                    <div>
-                        <table className="table table-condensed">
-                            <thead>
-                                <tr>
-                                    <td>Amount, USD</td>
-                                    <td>Fee, USD</td>
-                                    <td>Fee Percentage</td>
-                                    <td></td>
-                                </tr>
-                            </thead>
-                            <tbody>{this.state.transactions.map(this.renderTransaction)}</tbody>
-                        </table>
-                    </div>
-                );
+                if(this.state.transactions.length) {
+                    return (
+                        <div>
+                            <table className="table table-condensed">
+                                <thead>
+                                    <tr>
+                                        <td>Amount, USD</td>
+                                        <td>Fee, USD</td>
+                                        <td>Fee Percentage</td>
+                                        <td></td>
+                                    </tr>
+                                </thead>
+                                <tbody>{this.state.transactions.map(this.renderTransaction)}</tbody>
+                            </table>
+                        </div>
+                    );
+                } else {
+                    return null;
+                }
             } else {
                 return (<p>Retrieving latest transactions...</p>);
             }
@@ -74,27 +78,33 @@ class FeeVisualizer extends Component {
     }
 
     renderAverageValues = () => {
-        if(this.state.transactions && this.state.transactions.length) {
-            let average = {
-                percentage: _.meanBy(this.state.transactions, 'percentage').toFixed(4),
-                feeUSD: _.meanBy(this.state.transactions, 'feeUSD').toFixed(4)
-            };
-            let min = _.minBy(this.state.transactions, 'percentage'),
-                max = _.maxBy(this.state.transactions, 'percentage'),
-                // medianFee = (this.state.transactions[(this.state.transactions.length - 1) >> 1]['feeUSD'] + this.state.transactions[this.state.transactions.length >> 1]['feeUSD']) / 2,
-                medianPercentage = (this.state.transactions[(this.state.transactions.length - 1) >> 1]['percentage'] + this.state.transactions[this.state.transactions.length >> 1]['percentage']) / 2;
+        if(this.state.transactions) {
+            if(this.state.transactions.length) {
+                let average = {
+                    percentage: _.meanBy(this.state.transactions, 'percentage').toFixed(4),
+                    feeUSD: _.meanBy(this.state.transactions, 'feeUSD').toFixed(4)
+                };
+                let min = _.minBy(this.state.transactions, 'percentage'),
+                    max = _.maxBy(this.state.transactions, 'percentage'),
+                    // medianFee = (this.state.transactions[(this.state.transactions.length - 1) >> 1]['feeUSD'] + this.state.transactions[this.state.transactions.length >> 1]['feeUSD']) / 2,
+                    medianPercentage = (this.state.transactions[(this.state.transactions.length - 1) >> 1]['percentage'] + this.state.transactions[this.state.transactions.length >> 1]['percentage']) / 2;
 
-            return (
-                <div>
-                    <p>
-                        <b>Average <span className="hidden-xs">transaction</span> fee is {average.percentage}%,
-                        median <span className="hidden-xs">fee</span> is {medianPercentage.toFixed(4)}%</b><br/>
-                        Min fee is <span title={min.feeUSD.toFixed(2) + ' USD'}>{min.percentage.toFixed(4)}%</span> <a target="_blank" href={this.props.provider.getTransactionURL(min.id)} className="btn btn-link btn-xs">Transaction Details</a><br/>
-                        Max fee is <span title={max.feeUSD.toFixed(2) + ' USD'}>{max.percentage.toFixed(4)}%</span> <a target="_blank" href={this.props.provider.getTransactionURL(max.id)} className="btn btn-link btn-xs">Transaction Details</a>
-                    </p>
-                    <p>Latest transactions with amount between {this.props.minAmount} and {this.props.maxAmount} USD:</p>
-                </div>
-            );
+                return (
+                    <div>
+                        <p>
+                            <b>Average <span className="hidden-xs">transaction</span> fee is {average.percentage}%,
+                            median <span className="hidden-xs">fee</span> is {medianPercentage.toFixed(4)}%</b><br/>
+                            Min fee is <span title={min.feeUSD.toFixed(2) + ' USD'}>{min.percentage.toFixed(4)}%</span> <a target="_blank" href={this.props.provider.getTransactionURL(min.id)} className="btn btn-link btn-xs">Transaction Details</a><br/>
+                            Max fee is <span title={max.feeUSD.toFixed(2) + ' USD'}>{max.percentage.toFixed(4)}%</span> <a target="_blank" href={this.props.provider.getTransactionURL(max.id)} className="btn btn-link btn-xs">Transaction Details</a>
+                        </p>
+                        <p>Latest transactions with amount between {this.props.minAmount} and {this.props.maxAmount} USD:</p>
+                    </div>
+                );
+            } else {
+                return (
+                    <p><i>No recent transactions with amount between {this.props.minAmount} and {this.props.maxAmount} USD found.</i></p>
+                );
+            }
         } else {
             return null;
         }
