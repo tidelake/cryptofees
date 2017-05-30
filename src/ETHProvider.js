@@ -45,7 +45,7 @@ class ETHProvider extends CurrencyInfoProvider {
                     // console.log(this.transactions.length);
                     result = _.chain(this.transactions)
                         .filter((tx) => {
-                            return tx.amount > 0 && tx.gasUsed > 0
+                            return tx.amount > 0 && tx.gasUsed === 21000
                         })
                         .map((tx, index) => {
                             let amount = tx.amount / 1000000000000000000,
