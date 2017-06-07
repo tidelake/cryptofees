@@ -31,31 +31,39 @@ class BTCProvider extends CurrencyInfoProvider {
     };
 
     getLastTransactions(callback, callbackError) {
-        let blocks = (new Array(BLOCKS_TO_RETRIEVE).fill(0).map((item, index) => this.lastBlock - index));
+        if(this.transactions && (new Date().getTime() - this.lastUpdatedTimestamp < this.CACHE_TIMEOUT)) {
+            callback && callback(this.transactions);
+        } else {
+            this.transactions = null;
 
-        this.get('http://btc.blockr.io/api/v1/block/txs/' + blocks.join(','))
-            .then((response) => {
-                let data = JSON.parse(response),
-                    txs = _.flatMap(data.data, 'txs'),
-                    result = txs.map((tx, index) => {
-                        let sumOut = _.sumBy(tx.trade.vouts, 'amount');
+            let blocks = (new Array(BLOCKS_TO_RETRIEVE).fill(0).map((item, index) => this.lastBlock - index));
 
-                        return {
-                            id: tx.tx,
-                            fee: +tx.fee,
-                            amount: sumOut,
-                            feeUSD: tx.fee * this.price,
-                            amountUSD: sumOut * this.price,
-                            percentage: (+tx.fee) / ((+sumOut) + (+tx.fee)) * 100
-                        };
-                    });
+            this.get('http://btc.blockr.io/api/v1/block/txs/' + blocks.join(','))
+                .then((response) => {
+                    let data = JSON.parse(response),
+                        txs = _.flatMap(data.data, 'txs'),
+                        result = txs.map((tx, index) => {
+                            let sumOut = _.sumBy(tx.trade.vouts, 'amount');
 
-                callback && callback(result);
-            })
-            .catch((err) => {
-                callbackError && callbackError();
-                console.warn('Cannot retrieve latest BTC transactions!');
-            });
+                            return {
+                                id: tx.tx,
+                                fee: +tx.fee,
+                                amount: sumOut,
+                                feeUSD: tx.fee * this.price,
+                                amountUSD: sumOut * this.price,
+                                percentage: (+tx.fee) / ((+sumOut) + (+tx.fee)) * 100
+                            };
+                        });
+
+                    this.transactions = result;
+                    this.lastUpdatedTimestamp = new Date().getTime();
+                    callback && callback(this.transactions);
+                })
+                .catch((err) => {
+                    callbackError && callbackError();
+                    console.warn('Cannot retrieve latest BTC transactions!');
+                });
+        }
     }
 }
 

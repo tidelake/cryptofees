@@ -2,7 +2,7 @@ import CurrencyInfoProvider from './CurrencyInfoProvider';
 
 /* global _ */
 
-const TRANSACTIONS_TO_RETRIEVE = 1000;
+// const TRANSACTIONS_TO_RETRIEVE = 1000;
 const BLOCKS_TO_RETRIEVE = 10;
 
 class ETHProvider extends CurrencyInfoProvider {
@@ -38,12 +38,11 @@ class ETHProvider extends CurrencyInfoProvider {
                     txs = data.data,
                     result;
 
-                this.transactions = this.transactions.concat(txs);
+                this.retrievedTransactions = this.retrievedTransactions.concat(txs);
                 this.counter++;
 
                 if (this.counter === BLOCKS_TO_RETRIEVE) {
-                    // console.log(this.transactions.length);
-                    result = _.chain(this.transactions)
+                    result = _.chain(this.retrievedTransactions)
                         .filter((tx) => {
                             return tx.amount > 0 && tx.gasUsed === 21000
                         })
@@ -64,7 +63,10 @@ class ETHProvider extends CurrencyInfoProvider {
                             };
                         })
                         .value();
-                    callback && callback(result);
+
+                    this.lastUpdatedTimestamp = new Date().getTime();
+                    this.transactions = result;
+                    callback && callback(this.transactions);
                 }
             })
             .catch((err) => {
@@ -74,47 +76,17 @@ class ETHProvider extends CurrencyInfoProvider {
     }
 
     getLastTransactions(callback, callbackError) {
-        this.transactions = [];
-        this.counter = 0;
+        if(this.transactions && (new Date().getTime() - this.lastUpdatedTimestamp < this.CACHE_TIMEOUT)) {
+            callback && callback(this.transactions);
+        } else {
+            this.transactions = null;
+            this.retrievedTransactions = [];
+            this.counter = 0;
 
-        for (let i = 0; i < BLOCKS_TO_RETRIEVE; i++) {
-            this.getTransactionsFromBlock(this.lastBlock - i, callback, callbackError);
+            for (let i = 0; i < BLOCKS_TO_RETRIEVE; i++) {
+                this.getTransactionsFromBlock(this.lastBlock - i, callback, callbackError);
+            }
         }
-
-        // this.get('https://etherchain.org/api/txs/0/' + TRANSACTIONS_TO_RETRIEVE)
-        //     .then((response) => {
-        //         let data = JSON.parse(response),
-        //             transactions = data.data,
-        //             result;
-
-        //         result = _.chain(transactions)
-        //             .filter((tx) => {
-        //                 return tx.amount > 0 && tx.gasUsed === 21000
-        //             })
-        //             .map((tx, index) => {
-        //                 let amount = tx.amount / 1000000000000000000,
-        //                     fee = tx.gasUsed * (tx.price / 1000000000000000000),
-        //                     feeUSD = fee * this.price;
-
-        //                 return {
-        //                     id: tx.hash,
-        //                     amount: amount,
-        //                     amountUSD: amount * this.price,
-        //                     gasUsed: tx.gasUsed,
-        //                     gasPrice: tx.price / 1000000000000000000,
-        //                     fee: fee,
-        //                     feeUSD: feeUSD,
-        //                     percentage: fee / (fee + amount) * 100
-        //                 };
-        //             })
-        //             .value();
-
-        //         callback && callback(result);
-        //     })
-        //     .catch((err) => {
-        //         callbackError && callbackError();
-        //         console.warn('Cannot retrieve latest ETH transactions!');
-        //     });
     }
 }
 

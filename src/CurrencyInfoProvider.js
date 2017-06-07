@@ -1,4 +1,6 @@
 class CurrencyInfoProvider {
+    CACHE_TIMEOUT = 1000 * 60 * 20; // cache txs for 20 minutes
+
     get(url) {
       return new Promise((resolve, reject) => {
         const req = new XMLHttpRequest();
@@ -10,6 +12,7 @@ class CurrencyInfoProvider {
     }
 
     initialize() {
+        this.lastUpdatedTimestamp = 0;
         console.log('Initialized ' + this.constructor.name);
     }
 
