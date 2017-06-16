@@ -3,7 +3,8 @@ import CurrencyInfoProvider from './CurrencyInfoProvider';
 /* global _ */
 
 // const TRANSACTIONS_TO_RETRIEVE = 1000;
-const BLOCKS_TO_RETRIEVE = 10;
+const BLOCKS_TO_RETRIEVE = 8;
+const REQUEST_DELAY = 500; // delay between requests to reduce load on etherchain API
 
 class ETHProvider extends CurrencyInfoProvider {
 
@@ -76,7 +77,9 @@ class ETHProvider extends CurrencyInfoProvider {
     }
 
     getLastTransactions(callback, callbackError) {
-        if(this.transactions && (new Date().getTime() - this.lastUpdatedTimestamp < this.CACHE_TIMEOUT)) {
+        let root = this;
+
+        if (this.transactions && (new Date().getTime() - this.lastUpdatedTimestamp < this.CACHE_TIMEOUT)) {
             callback && callback(this.transactions);
         } else {
             this.transactions = null;
@@ -84,7 +87,9 @@ class ETHProvider extends CurrencyInfoProvider {
             this.counter = 0;
 
             for (let i = 0; i < BLOCKS_TO_RETRIEVE; i++) {
-                this.getTransactionsFromBlock(this.lastBlock - i, callback, callbackError);
+                setTimeout(function() {
+                    root.getTransactionsFromBlock(root.lastBlock - i, callback, callbackError);
+                }, (i + 1) * REQUEST_DELAY);
             }
         }
     }
