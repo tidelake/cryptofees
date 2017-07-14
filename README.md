@@ -4,6 +4,7 @@ An easy way to compare Bitcoin and Ether transaction fees - http://cryptofees.ne
 ## Used Libraries
 * Twitter Bootstrap used under the MIT License https://github.com/twbs/bootstrap/blob/master/LICENSE
 * jQuery used under the MIT license https://jquery.org/license/
+* Lodash used under the MIT license https://raw.githubusercontent.com/lodash/lodash/4.17.4/LICENSE
 * React.js used under BSD License https://github.com/facebook/react
 * This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
