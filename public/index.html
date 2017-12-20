@@ -4,10 +4,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="Description" content="CryptoFees is an easiest way to compare Bitcoin and Ether transaction fees.">
+    <meta name="Description" content="CryptoFees is an easiest way to compare Bitcoin, Bitcoin Cash and Ether transaction fees.">
 
     <meta property="og:title" content="CryptoFees - cryprocurrencies fee analyzer" />
-    <meta property="og:description" content="CryptoFees is an easiest way to compare Bitcoin and Ether transaction fees." />
+    <meta property="og:description" content="CryptoFees is an easiest way to compare Bitcoin, Bitcoin Cash and Ether transaction fees." />
     <meta property="og:image" content="http://cryptofees.net/img/cryptofees-image.jpg" />
     <meta property="og:url" content="http://cryptofees.net/" />
 
@@ -77,7 +77,7 @@
                     </p>
                     <p>
                         How it works (technical stuff).
-                        First, site retrieves current exchange rates and a bunch of latest <a target="_blank" href="http://blockr.io/documentation/api">BTC</a> and <a target="_blank" href="https://etherchain.org/apidoc">ETH</a> transactions. Then to compare apples to apples all contract ETH transactions are omitted. From these two sets of transactions algorithm takes only the ones within provided amount range (default is 20-100 USD, you can enter any other values) and calculates average/median/min/max values. It is up to you to decide which cryptocurrency is better based on your needs.
+                        First, site retrieves current exchange rates and a bunch of latest Bitcoin (BTC), Bitcoin Cash (BCC) and Ethereum (ETH) transactions. Then to compare apples to apples all contract ETH transactions are omitted. From these two sets of transactions algorithm takes only the ones within provided amount range (default is 20-100 USD, you can enter any other values) and calculates average/median/min/max values. It is up to you to decide which cryptocurrency is better based on your needs.
                     </p>
                     <p class="text-muted">
                         This site has no ads and I make no profit from it. However, if you want to buy me a beer, you can find BTC and ETH addresses in the footer of the page.
@@ -91,6 +91,12 @@
     </div>
 
     <div class="container">
+        <div class="alert alert-warning">
+            Because APIs used by CryptoFees are under maintenance, site cannot show current fees for Ethereum. <br>
+            New currency is added - Bitcoin Cash. <br>
+            Currently server data about transactions is refreshed manually daily or slower.<br>
+            <i>Sorry for inconveniences, site is still in development and may be rough around edges.</i>
+        </div>
         <div id="root"></div>
         <hr>
         <p class="text-info">

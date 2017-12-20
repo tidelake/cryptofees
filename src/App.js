@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 
 import FeeVisualizer from './FeeVisualizer';
-import BTCProvider from './BTCProvider';
-import ETHProvider from './ETHProvider';
+
+import BTCInfo from './BTCInfo';
+import BCCInfo from './BCCInfo';
 
 import './App.css';
 
@@ -12,11 +13,11 @@ class App extends Component {
 
         this.state = {
             minAmount: 20,
-            maxAmount: 100
+            maxAmount: 200
         };
 
-        this.providerBTC = new BTCProvider();
-        this.providerETH = new ETHProvider();
+        this.infoBTC = new BTCInfo();
+        this.infoBCC = new BCCInfo();
 
         this.handleSubmit = this.handleSubmit.bind(this);
     }
@@ -54,10 +55,10 @@ class App extends Component {
                 <hr/>
                 <div className="row">
                     <div className="col-md-6">
-                        <FeeVisualizer minAmount={this.state.minAmount} maxAmount={this.state.maxAmount} provider={this.providerBTC} />
+                        <FeeVisualizer minAmount={this.state.minAmount} maxAmount={this.state.maxAmount} provider={this.infoBTC} />
                     </div>
                     <div className="col-md-6">
-                        <FeeVisualizer minAmount={this.state.minAmount} maxAmount={this.state.maxAmount} provider={this.providerETH} />
+                        <FeeVisualizer minAmount={this.state.minAmount} maxAmount={this.state.maxAmount} provider={this.infoBCC} />
                     </div>
                 </div>
             </div>

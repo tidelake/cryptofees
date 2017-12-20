@@ -16,9 +16,12 @@ class FeeVisualizer extends Component {
 
     componentDidMount() {
         this.setState({ price: '' });
-        this.props.provider.initialize((price) => {
+        this.props.provider.initialize();
+        this.props.provider.getData((data) => {
             this.setState({
-                price: price.toFixed(1) + ' USD'
+                price: data.price.toFixed(1) + ' USD',
+                allTransactions: data.transactions,
+                lastUpdated: data.lastUpdated
             });
 
             this.retrieveTransactions(+this.props.minAmount, +this.props.maxAmount);
@@ -29,27 +32,23 @@ class FeeVisualizer extends Component {
     }
 
     retrieveTransactions(min, max) {
-        this.props.provider.getLastTransactions((txs) => {
-            let transactions = _.chain(txs)
-                .filter((tx) => { return tx.fee > 0 && tx.amountUSD >= min && tx.amountUSD <= max })
-                // .take(30) // TODO configure this?
-                .orderBy('percentage')
-                .value();
+        let transactions = _.chain(this.state.allTransactions)
+            .filter((tx) => { return tx.fee > 0 && tx.amountUSD >= min && tx.amountUSD <= max })
+            // .take(30) // TODO configure this?
+            .orderBy('percentage')
+            .value();
 
-            this.setState({
-                error: undefined,
-                price: this.state.price,
-                transactions: transactions
-            });
-        },
-        () => {
-            this.setState({ error: true });
+        this.setState({
+            error: undefined,
+            price: this.state.price,
+            allTransactions: this.state.allTransactions,
+            transactions: transactions
         });
     }
 
     renderTransactions = () => {
         if(this.state.error) {
-            return (<div className="text-danger">Error: cannot retrieve {this.props.provider.getCurrencyName()} transactions.</div>);
+            return (<div className="text-danger">Error: cannot retrieve {this.props.provider.shortName} transactions.</div>);
         } else {
             if(this.state.transactions) {
                 if(this.state.transactions.length) {
@@ -120,9 +119,9 @@ class FeeVisualizer extends Component {
         return (
             <div>
                 <h2>
-                    <img src={'img/' + this.props.provider.getCurrencyName().toLowerCase() + '.svg'} alt="" className="currency-logo" />
-                    <b>{this.props.provider.getCurrencyName()}</b>
-                    <span className="price pull-right">{this.state.price}</span>
+                    <img src={'img/' + this.props.provider.shortName.toLowerCase() + '.svg'} alt={this.props.provider.fullName} className="currency-logo" />
+                    <b title={this.props.provider.fullName}>{this.props.provider.shortName}</b>
+                    <span className="price pull-right" title={"Last updated: " + this.props.provider.lastUpdated}>{this.state.price}</span>
                 </h2>
                 {this.renderAverageValues()}
                 <div className="transactionsList">
