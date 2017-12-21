@@ -3,7 +3,7 @@ const _ = require('lodash');
 
 const TRANSACTIONS_TO_RETRIEVE = 2000;
 const BLOCKS_TO_RETRIEVE = 10;
-const REQUEST_DELAY = 1500; // delay between requests to reduce load on API
+const REQUEST_DELAY = 2000; // delay between requests to reduce load on API
 const TRANSACTIONS_PER_PAGE = 10;
 
 class BTCProvider extends CurrencyInfoProvider {
@@ -122,7 +122,7 @@ class BTCProvider extends CurrencyInfoProvider {
             })
             .catch(err => {
                 console.warn(`Cannot retrieve ${this.getCurrencyName()} transactions from ${url}`);
-                console.log(err);
+                // console.log(err);
                 callbackError && callbackError();
             });
     }
