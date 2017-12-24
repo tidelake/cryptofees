@@ -13,11 +13,15 @@ function getData(provider) {
 
 	provider.initialize(price => {
 	    provider.getLastTransactions(txs => {
+	    	const updatedTimestamp = new Date().toUTCString();
+
+	    	console.log(`Updated ${provider.getCurrencyName()} on ${updatedTimestamp}`);
+
 			fs.writeFile(`${PATH_TO_RESULT}/${provider.getCurrencyName()}.json`,
 				JSON.stringify({
 					currency: provider.getCurrencyName(),
 					price: price,
-					lastUpdated: new Date().toUTCString(),
+					lastUpdated: updatedTimestamp,
 					transactions: txs
 				}),
 				error => {
@@ -42,8 +46,3 @@ const providerBCC =  new BCCProvider();
 
 getData(providerBTC);
 getData(providerBCC);
-
-// console.log(CurrencyInfoProvider.prototype.initialize);
-// console.log(new ETHProvider().getCurrencyName());
-
-// process.exit(0);

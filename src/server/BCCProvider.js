@@ -2,7 +2,7 @@ const BTCProvider = require('./BTCProvider');
 
 class BCCProvider extends BTCProvider {
     getCurrencyName() {
-        return 'BCC';
+        return 'BCH';
     }
 
     get apiURL() {

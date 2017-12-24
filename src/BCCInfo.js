@@ -4,7 +4,7 @@ import CurrencyInfo from './CurrencyInfo';
 
 class BCCInfo extends CurrencyInfo {
     get shortName() {
-        return 'BCC';
+        return 'BCH';
     }
 
     get fullName() {
