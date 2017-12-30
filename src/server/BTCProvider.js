@@ -5,6 +5,7 @@ const TRANSACTIONS_TO_RETRIEVE = 2000;
 const BLOCKS_TO_RETRIEVE = 10;
 const REQUEST_DELAY = 2000; // delay between requests to reduce load on API
 const TRANSACTIONS_PER_PAGE = 10;
+const MAX_FAILED_REQUESTS = 5;
 
 class BTCProvider extends CurrencyInfoProvider {
     initialize(callback, callbackError) {
@@ -35,6 +36,10 @@ class BTCProvider extends CurrencyInfoProvider {
                 callbackError && callbackError();
                 console.warn('Cannot retrieve basic BTC info!');
             });
+    }
+
+    get maxFailedRequests() {
+        return MAX_FAILED_REQUESTS;
     }
 
     get transactionsCount() {
@@ -122,8 +127,13 @@ class BTCProvider extends CurrencyInfoProvider {
             })
             .catch(err => {
                 console.warn(`Cannot retrieve ${this.getCurrencyName()} transactions from ${url}`);
-                // console.log(err);
-                callbackError && callbackError();
+
+                this.counterErrors++;
+                if (this.counterErrors < this.maxFailedRequests) {
+                    this.counter++;
+                } else {
+                    callbackError && callbackError();
+                }
             });
     }
 
@@ -136,6 +146,7 @@ class BTCProvider extends CurrencyInfoProvider {
             this.transactions = null;
             this.retrievedTransactions = [];
             this.counter = 0;
+            this.counterErrors = 0;
 
             for (let i = 0; i < this.requestURLs.length; i++) {
                 setTimeout(function() {
