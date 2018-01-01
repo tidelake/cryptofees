@@ -1,7 +1,5 @@
 import CurrencyInfo from './CurrencyInfo';
 
-/* global _ */
-
 class BCCInfo extends CurrencyInfo {
     get shortName() {
         return 'BCH';

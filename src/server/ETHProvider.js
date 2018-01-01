@@ -1,31 +1,50 @@
 const CurrencyInfoProvider = require('./CurrencyInfoProvider');
 const _ = require('lodash');
 
-const BLOCKS_TO_RETRIEVE = 8;
-const REQUEST_DELAY = 500; // delay between requests to reduce load on etherchain API
+const TRANSACTIONS_TO_RETRIEVE = 500;
+const REQUEST_DELAY = 500; // delay between requests to reduce load on blockcypher.com API
+const MAX_FAILED_REQUESTS = 5;
 
 class ETHProvider extends CurrencyInfoProvider {
-
     initialize(callback, callbackError) {
         super.initialize();
 
-        this.get('https://etherchain.org/api/basic_stats')
-            .then((response) => {
-                let data = JSON.parse(response);
+        this.transactions = [];
 
-                this.price = data.currentStats.price_usd;
-                this.lastBlock = data.blocks[0].number;
+        this.get(this.basicInfoURL)
+            .then(response => {
+                const data = JSON.parse(response);
+                this.price = +data[0].price_usd;
 
-console.log(this.price);
-console.log(this.lastBlock);
+                this.get(this.basicBlockchainInfoURL)
+                    .then(response => {
+                        const data = JSON.parse(response);
+                        this.height = data.height;
 
-                callback && callback(this.price);
+                        console.log(`Retrieved basic info for ${this.getCurrencyName()}`);
+                        callback && callback(this.price);
+                    })
+                    .catch((err) => {
+                        callbackError && callbackError();
+                        console.warn('Cannot retrieve basic ETH info!');
+                    });
             })
             .catch((err) => {
-                console.log(err);
                 callbackError && callbackError();
-                console.warn('Cannot retrieve basic ETH info!');
+                console.warn('Cannot retrieve ETH price!');
             });
+    }
+
+    get maxFailedRequests() {
+        return MAX_FAILED_REQUESTS;
+    }
+
+    get basicInfoURL() {
+        return 'https://api.coinmarketcap.com/v1/ticker/ethereum/';
+    }
+
+    get basicBlockchainInfoURL() {
+        return 'https://api.blockcypher.com/v1/eth/main';
     }
 
     getCurrencyName() {
@@ -36,66 +55,108 @@ console.log(this.lastBlock);
         return 'https://etherscan.io/tx/' + tx;
     }
 
-    getTransactionsFromBlock(block, callback, callbackError) {
-        this.get('https://etherchain.org/api/block/' + block + '/tx')
-            .then((response) => {
-                let data = JSON.parse(response),
-                    txs = data.data,
-                    result;
+    get transactionsPerRequest() {
+        return 3;
+    }
 
-                this.retrievedTransactions = this.retrievedTransactions.concat(txs);
-                this.counter++;
+    get apiURL() {
+        return 'https://api.blockcypher.com/v1/eth/main';
+    }
 
-                if (this.counter === BLOCKS_TO_RETRIEVE) {
-                    result = _.chain(this.retrievedTransactions)
-                        .filter((tx) => {
-                            return tx.amount > 0 && tx.gasUsed === 21000
-                        })
-                        .map((tx, index) => {
-                            let amount = tx.amount / 1000000000000000000,
-                                fee = tx.gasUsed * (tx.price / 1000000000000000000),
-                                feeUSD = fee * this.price;
+    getTransactionsURL(callbackGetTransactions, callbackDone, callbackError) {
+        this.get(`${this.apiURL}/blocks/${this.currentBlock}?txstart=0&limit=1000`)
+            .then(response => {
+                const data = JSON.parse(response);
+                for (let i = 0; i < data.txids.length; i += this.transactionsPerRequest) {
+                    const txs = [];
 
-                            return {
-                                id: tx.hash,
-                                amount: amount,
-                                amountUSD: amount * this.price,
-                                gasUsed: tx.gasUsed,
-                                gasPrice: tx.price / 1000000000000000000,
-                                fee: fee,
-                                feeUSD: feeUSD,
-                                percentage: fee / (fee + amount) * 100
-                            };
-                        })
-                        .value();
+                    for (let j = 0; j < this.transactionsPerRequest; j++) {
+                        const tx = data.txids[i + j];
+                        if (tx) {
+                            txs.push(tx);
+                        }
+                    }
 
-                    this.lastUpdatedTimestamp = new Date().getTime();
-                    this.transactions = result;
-                    callback && callback(this.transactions);
+                    this.transactionURLs.push(`${this.apiURL}/txs/${txs.join(';')}`);
+                    this.preparedTransactionsCount += this.transactionsPerRequest;
+
+                    if (this.preparedTransactionsCount >= TRANSACTIONS_TO_RETRIEVE) {
+                        break;
+                    }
+                }
+
+                this.currentBlock--;
+
+                if (this.preparedTransactionsCount < TRANSACTIONS_TO_RETRIEVE) {
+                    setTimeout(
+                        () => { this.getTransactionsURL(callbackGetTransactions, callbackDone, callbackError); },
+                        REQUEST_DELAY
+                    );
+                } else {
+                    callbackGetTransactions(this.transactionURLs, callbackDone, callbackError);
                 }
             })
             .catch((err) => {
                 callbackError && callbackError();
-                console.warn('Cannot retrieve latest ETH transactions!');
+                console.warn('Cannot retrieve basic ETH info!');
             });
     }
 
-    getLastTransactions(callback, callbackError) {
-        let root = this;
+    prepareTransactionURLs(callbackGetTransactions, callbackDone, callbackError) {
+        this.transactionURLs = [];
+        this.preparedTransactionsCount = 0;
+        this.currentBlock = this.height;
 
-        if (this.transactions && (new Date().getTime() - this.lastUpdatedTimestamp < this.CACHE_TIMEOUT)) {
-            callback && callback(this.transactions);
-        } else {
-            this.transactions = null;
-            this.retrievedTransactions = [];
-            this.counter = 0;
+        this.getTransactionsURL(callbackGetTransactions, callbackDone, callbackError);
+    }
 
-            for (let i = 0; i < BLOCKS_TO_RETRIEVE; i++) {
-                setTimeout(function() {
-                    root.getTransactionsFromBlock(root.lastBlock - i, callback, callbackError);
-                }, (i + 1) * REQUEST_DELAY);
-            }
+    getTransactions(urls, callbackDone, callbackError) {
+        let currentURLindex = 0;
+
+        const getTransactionsBatch = () => {
+            const url = urls[currentURLindex];
+
+            this.get(url)
+                .then(response => {
+                    const data = JSON.parse(response);
+
+                    data.forEach(tx => {
+                        const amount = tx.total / 1000000000000000000;
+                        const fee = tx.fees / 1000000000000000000;
+
+                        if (tx.gas_used === 21000) {
+                            this.transactions.push({
+                                id: tx.hash,
+                                amount,
+                                amountUSD: amount * this.price,
+                                fee,
+                                feeUSD: fee * this.price,
+                                percentage: fee / (fee + amount) * 100
+                            });
+                        }
+                    });
+
+                    currentURLindex++;
+
+                    if (currentURLindex < urls.length) {
+                        setTimeout(() => { getTransactionsBatch(); }, REQUEST_DELAY);
+                    } else {
+                        callbackDone(this.transactions);
+                    }
+                })
+                .catch((err) => {
+console.log(currentURLindex, url);
+                    callbackError && callbackError();
+                });
         }
+
+        getTransactionsBatch();
+
+        // console.log(urls);
+    }
+
+    getLastTransactions(callback, callbackError) {
+        this.prepareTransactionURLs(this.getTransactions.bind(this), callback, callbackError);
     }
 }
 

@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="Description" content="CryptoFees is an easiest way to compare Bitcoin, Bitcoin Cash and Ether transaction fees.">
+    <meta name="Description" content="CryptoFees is an easiest way to compare Bitcoin, Bitcoin Cash and Ethereum transaction fees.">
 
     <meta property="og:title" content="CryptoFees - cryprocurrencies fee analyzer" />
     <meta property="og:description" content="CryptoFees is an easiest way to compare Bitcoin, Bitcoin Cash and Ether transaction fees." />
@@ -76,7 +76,7 @@
                         CryptoFees is an <a target="_blank" href="https://github.com/keaukraine/cryptofees">open-source project</a> made by <a target="_blank" href="https://twitter.com/keaukraine">Oleksandr Popov</a> to showcase which cryptocurrency provides best fees for money transfers by analyzing latest transactions from Bitcoin and Ethereum blockchains.
                     </p>
                     <p>
-                        How it works (technical stuff).
+                        How it works (technical stuff).<br>
                         First, site retrieves current exchange rates and a bunch of latest Bitcoin (BTC), Bitcoin Cash (BCC) and Ethereum (ETH) transactions. Then to compare apples to apples all contract ETH transactions are omitted. From these two sets of transactions algorithm takes only the ones within provided amount range (default is 20-100 USD, you can enter any other values) and calculates average/median/min/max values. It is up to you to decide which cryptocurrency is better based on your needs.
                     </p>
                     <p class="text-muted">
@@ -93,8 +93,8 @@
     <div class="container">
         <div class="alert alert-warning alert-dismissible">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            Because APIs used by CryptoFees are under maintenance, site cannot show current fees for Ether. <br>
-            New currency is added - <i>Bitcoin Cash</i>. <br>
+            <b>Updates</b><br>
+            Now also displaying fees for Ether.<br>
             <i>Sorry for inconveniences, site is still in development and may be rough around edges.</i>
         </div>
         <div id="root"></div>
@@ -116,7 +116,7 @@
                     <span class="text-small visible-xs">Buy me a beer:</span>
                 </div>
                 <div class="col-md-12 text-muted">
-                    Tip jars: 
+                    Tip jars:
                     <span>BTC 1Cufmj51Yvbdho7JWnxStXf8ufAPzvVfsC</span>
                     <span>BCC 1EcPymHbU5jrWJiUunNVbrDWb5VMS4G3QJ</span>
                     <span>ETH 0xAaB93be5d54e594f412945457DCCF01018F1a87D</span>

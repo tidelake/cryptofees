@@ -46,3 +46,4 @@ const providerBCC =  new BCCProvider();
 
 getData(providerBTC);
 getData(providerBCC);
+getData(providerETH);
