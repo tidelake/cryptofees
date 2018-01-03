@@ -28,7 +28,7 @@ class App extends Component {
         return (
             <div>
                 <p className="hidden-xs"><i>Enter minimum and maximum amount in USD to compare BTC, BCH and ETH fees for transactions in provided range.</i></p>
-                <p className="hidden-sm hidden-md hidden-lg"><i>Enter min and max amount in USD to compare BTC and ETH fees in provided range.</i></p>
+                <p className="hidden-sm hidden-md hidden-lg"><i>Enter min &amp; max transaction amount to compare BTC, BCH and ETH fees in provided range.</i></p>
                 <div className="row">
                     <div className="col-md-12">
                         <form className="form-inline" onSubmit={this.handleSubmit}>
@@ -62,7 +62,7 @@ class App extends Component {
                     <div className="col-md-6">
                         <FeeVisualizer minAmount={this.state.minAmount} maxAmount={this.state.maxAmount} provider={this.infoBCC} />
                     </div>
-                    <div className="col-md-6 col-md-offset-3">
+                    <div className="col-md-6">
                         <FeeVisualizer minAmount={this.state.minAmount} maxAmount={this.state.maxAmount} provider={this.infoETH} />
                     </div>
                 </div>

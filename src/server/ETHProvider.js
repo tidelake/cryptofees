@@ -1,8 +1,8 @@
 const CurrencyInfoProvider = require('./CurrencyInfoProvider');
 const _ = require('lodash');
 
-const TRANSACTIONS_TO_RETRIEVE = 500;
-const REQUEST_DELAY = 500; // delay between requests to reduce load on blockcypher.com API
+const TRANSACTIONS_TO_RETRIEVE = 80;
+const REQUEST_DELAY = 2600; // delay between requests to reduce load on blockcypher.com API
 const MAX_FAILED_REQUESTS = 5;
 
 class ETHProvider extends CurrencyInfoProvider {
@@ -16,18 +16,20 @@ class ETHProvider extends CurrencyInfoProvider {
                 const data = JSON.parse(response);
                 this.price = +data[0].price_usd;
 
-                this.get(this.basicBlockchainInfoURL)
-                    .then(response => {
-                        const data = JSON.parse(response);
-                        this.height = data.height;
+                setTimeout(() => {
+                    this.get(this.basicBlockchainInfoURL)
+                        .then(response => {
+                            const data = JSON.parse(response);
+                            this.height = data.height;
 
-                        console.log(`Retrieved basic info for ${this.getCurrencyName()}`);
-                        callback && callback(this.price);
-                    })
-                    .catch((err) => {
-                        callbackError && callbackError();
-                        console.warn('Cannot retrieve basic ETH info!');
-                    });
+                            console.log(`Retrieved basic info for ${this.getCurrencyName()}`);
+                            callback && callback(this.price);
+                        })
+                        .catch((err) => {
+                            callbackError && callbackError();
+                            console.warn('Cannot retrieve basic ETH info!');
+                        });
+                }, REQUEST_DELAY);
             })
             .catch((err) => {
                 callbackError && callbackError();
@@ -112,6 +114,7 @@ class ETHProvider extends CurrencyInfoProvider {
 
     getTransactions(urls, callbackDone, callbackError) {
         let currentURLindex = 0;
+        let failedRequestsCount = 0;
 
         const getTransactionsBatch = () => {
             const url = urls[currentURLindex];
@@ -137,7 +140,6 @@ class ETHProvider extends CurrencyInfoProvider {
                     });
 
                     currentURLindex++;
-
                     if (currentURLindex < urls.length) {
                         setTimeout(() => { getTransactionsBatch(); }, REQUEST_DELAY);
                     } else {
@@ -145,8 +147,19 @@ class ETHProvider extends CurrencyInfoProvider {
                     }
                 })
                 .catch((err) => {
-console.log(currentURLindex, url);
-                    callbackError && callbackError();
+console.log(currentURLindex, url)
+console.log(err)
+                    failedRequestsCount++;
+                    if (failedRequestsCount >= this.maxFailedRequests) {
+                        callbackError && callbackError();
+                    } else {
+                        currentURLindex++;
+                        if (currentURLindex < urls.length) {
+                            setTimeout(() => { getTransactionsBatch(); }, REQUEST_DELAY);
+                        } else {
+                            callbackDone(this.transactions);
+                        }
+                    }
                 });
         }
 
