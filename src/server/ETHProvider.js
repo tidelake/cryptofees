@@ -147,8 +147,7 @@ class ETHProvider extends CurrencyInfoProvider {
                     }
                 })
                 .catch((err) => {
-console.log(currentURLindex, url)
-console.log(err)
+                    console.log(`Error retrieving data from ${currentURLindex} ${url}`);
                     failedRequestsCount++;
                     if (failedRequestsCount >= this.maxFailedRequests) {
                         callbackError && callbackError();
@@ -164,8 +163,6 @@ console.log(err)
         }
 
         getTransactionsBatch();
-
-        // console.log(urls);
     }
 
     getLastTransactions(callback, callbackError) {
