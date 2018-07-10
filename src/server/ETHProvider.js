@@ -1,7 +1,7 @@
 const CurrencyInfoProvider = require('./CurrencyInfoProvider');
 const _ = require('lodash');
 
-const TRANSACTIONS_TO_RETRIEVE = 80;
+const TRANSACTIONS_TO_RETRIEVE = 85;
 const REQUEST_DELAY = 2800; // delay between requests to reduce load on blockcypher.com API
 const MAX_FAILED_REQUESTS = 5;
 
