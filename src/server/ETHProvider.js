@@ -131,10 +131,7 @@ class ETHProvider extends CurrencyInfoProvider {
                             this.transactions.push({
                                 id: tx.hash,
                                 amount,
-                                amountUSD: amount * this.price,
-                                fee,
-                                feeUSD: fee * this.price,
-                                percentage: fee / (fee + amount) * 100
+                                fee
                             });
                         }
                     });

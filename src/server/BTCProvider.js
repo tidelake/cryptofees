@@ -108,10 +108,7 @@ class BTCProvider extends CurrencyInfoProvider {
                                 return {
                                     id: tx.txid,
                                     amount: amount,
-                                    amountUSD: amount * this.price,
-                                    fee: fee,
-                                    feeUSD: feeUSD,
-                                    percentage: fee / (fee + amount) * 100
+                                    fee: fee
                                 };
                             })
                             .value();
