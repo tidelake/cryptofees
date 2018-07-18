@@ -40,7 +40,11 @@ class CurrencyInfo {
 
     getTransactionURL(tx) {
         return tx;
-    };    
+    };
+
+    get logoSVG() {
+        return "";
+    }
 }
 
 export default CurrencyInfo;

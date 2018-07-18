@@ -119,7 +119,7 @@ class FeeVisualizer extends Component {
         return (
             <div>
                 <h2>
-                    <img src={'img/' + this.props.provider.shortName.toLowerCase() + '.svg'} alt={this.props.provider.fullName} className="currency-logo" />
+                    <img src={`data:image/svg+xml;utf8,${this.props.provider.logoSVG}`} alt={this.props.provider.fullName} className="currency-logo" />
                     <b title={this.props.provider.fullName}>{this.props.provider.shortName}</b>
                     <span className="price pull-right" title={"Last updated: " + this.props.provider.lastUpdated}>{this.state.price}</span>
                 </h2>
