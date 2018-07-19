@@ -29,12 +29,12 @@ class BTCProvider extends CurrencyInfoProvider {
                     })
                     .catch(error => {
                         callbackError && callbackError();
-                        console.warn('Cannot retrieve basic BTC info!');
+                        console.warn(`Cannot retrieve basic ${this.getCurrencyName()} info!`);
                     });
             })
             .catch((err) => {
                 callbackError && callbackError();
-                console.warn('Cannot retrieve basic BTC info!');
+                console.warn(`Cannot retrieve basic ${this.getCurrencyName()} info!`);
             });
     }
 
